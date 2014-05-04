@@ -1,0 +1,251 @@
+# Laravel Feature Flags
+
+[![Tests](https://github.com/philiprehberger/laravel-feature-flags/actions/workflows/tests.yml/badge.svg)](https://github.com/philiprehberger/laravel-feature-flags/actions/workflows/tests.yml)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/philiprehberger/laravel-feature-flags.svg)](https://packagist.org/packages/philiprehberger/laravel-feature-flags)
+[![PHP Version](https://img.shields.io/badge/php-%5E8.2-blue)](https://www.php.net/)
+[![Laravel Version](https://img.shields.io/badge/laravel-%5E11.0%7C%5E12.0-red)](https://laravel.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+Lightweight feature flags for Laravel with config and database drivers, percentage rollout, and scheduling. No external services required.
+
+## Features
+
+- Two drivers: **config** (deploy with code) and **database** (toggle at runtime)
+- **Percentage rollout** — expose a feature to a deterministic percentage of users
+- **Scheduling** — activate features between `enabled_from` and `enabled_until` timestamps
+- **Blade directives** — `@feature` / `@featurefor` for template-level gating
+- **Route middleware** — `feature:{name}` returns 403 for inactive features
+- **Artisan commands** — `feature:list`, `feature:enable`, `feature:disable`
+- **Facade** — `Feature::active()`, `Feature::for($user)->active()`
+- Laravel package auto-discovery
+
+## Requirements
+
+- PHP ^8.2
+- Laravel ^11.0 or ^12.0
+
+## Installation
+
+Install via Composer:
+
+```bash
+composer require philiprehberger/laravel-feature-flags
+```
+
+The service provider and `Feature` facade are registered automatically via Laravel's package auto-discovery.
+
+### Publish the config
+
+```bash
+php artisan vendor:publish --tag=feature-flags-config
+```
+
+### Publish and run the migration (database driver only)
+
+```bash
+php artisan vendor:publish --tag=feature-flags-migrations
+php artisan migrate
+```
+
+## Configuration
+
+`config/feature-flags.php`:
+
+```php
+return [
+
+    // 'config' reads flags from the 'features' array below.
+    // 'database' reads flags from the feature_flags table.
+    'driver' => env('FEATURE_FLAGS_DRIVER', 'config'),
+
+    'features' => [
+        // Simple on/off flag
+        'new-checkout' => true,
+
+        // Partial rollout — 25% of users will see this feature
+        'beta-dashboard' => ['active' => true, 'rollout' => 25],
+
+        // Scheduled flag — only active between the two dates
+        'holiday-banner' => [
+            'active'        => true,
+            'enabled_from'  => '2026-12-01',
+            'enabled_until' => '2026-12-31',
+        ],
+
+        // Combined: rollout + scheduling
+        'early-access' => [
+            'active'       => true,
+            'rollout'      => 10,
+            'enabled_from' => '2026-06-01',
+        ],
+    ],
+
+];
+```
+
+Set the driver via your `.env`:
+
+```env
+FEATURE_FLAGS_DRIVER=database
+```
+
+## Usage
+
+### Facade
+
+```php
+use PhilipRehberger\FeatureFlags\Facades\Feature;
+
+// Global check (no user context)
+if (Feature::active('new-checkout')) {
+    // ...
+}
+
+// Per-user check (respects rollout percentage)
+if (Feature::for($request->user())->active('beta-dashboard')) {
+    // ...
+}
+
+// List all defined flags
+$flags = Feature::allFeatures();
+
+// Enable / disable at runtime (database driver only)
+Feature::enable('new-checkout');
+Feature::disable('new-checkout');
+```
+
+### Blade Directives
+
+Global check:
+
+```blade
+@feature('new-checkout')
+    <x-checkout-v2 />
+@endfeature
+```
+
+With an else branch (plain PHP `@else`):
+
+```blade
+@feature('new-checkout')
+    <x-checkout-v2 />
+@else
+    <x-checkout-v1 />
+@endfeature
+```
+
+Conditional on a second feature (`@elsefeature` is the elseif variant):
+
+```blade
+@feature('checkout-v3')
+    <x-checkout-v3 />
+@elsefeature('new-checkout')
+    <x-checkout-v2 />
+@endfeature
+```
+
+Per-user check (respects rollout):
+
+```blade
+@featurefor('beta-dashboard', auth()->user())
+    <x-beta-dashboard />
+@endfeaturefor
+```
+
+### Route Middleware
+
+Protect a route so it returns 403 when the feature is inactive:
+
+```php
+Route::get('/checkout/v2', CheckoutV2Controller::class)
+    ->middleware('feature:new-checkout');
+```
+
+When the request has an authenticated user, the per-user rollout check is applied. Otherwise the global active state is used.
+
+### Artisan Commands
+
+```bash
+# List all feature flags with status, rollout, and schedule
+php artisan feature:list
+
+# Enable a flag (database driver only)
+php artisan feature:enable new-checkout
+
+# Disable a flag (database driver only)
+php artisan feature:disable new-checkout
+```
+
+Example `feature:list` output:
+
+```
++------------------+---------+------------+-----------+-------------+
+| Name             | Status  | Rollout    | Schedule  | Description |
++------------------+---------+------------+-----------+-------------+
+| new-checkout     | active  | all users  | always    | —           |
+| beta-dashboard   | active  | 25%        | always    | —           |
+| holiday-banner   | active  | all users  | 2026-12-01 → 2026-12-31 | — |
++------------------+---------+------------+-----------+-------------+
+```
+
+## Drivers
+
+### Config Driver
+
+Flags are defined in `config/feature-flags.php`. Changes require a deployment. This is the default driver and ideal for flags that are tied to your release cycle.
+
+### Database Driver
+
+Flags are stored in the `feature_flags` table and can be toggled at runtime via Artisan commands, the facade, or any database tooling. Run the migration before using this driver.
+
+The migration creates the following columns:
+
+| Column | Type | Description |
+|---|---|---|
+| `id` | bigint | Primary key |
+| `name` | string (unique) | Flag identifier |
+| `description` | string (nullable) | Optional description |
+| `active` | boolean | Master on/off switch |
+| `rollout_percentage` | tinyint (nullable) | Percentage of users (0–100) |
+| `enabled_from` | timestamp (nullable) | Activation start |
+| `enabled_until` | timestamp (nullable) | Activation end |
+| `created_at` / `updated_at` | timestamps | Standard Laravel timestamps |
+
+## Rollout Logic
+
+Percentage rollout uses a deterministic hash to ensure the same user always receives the same result:
+
+```php
+$hash = abs(crc32($featureName . $user->getAuthIdentifier()));
+$active = ($hash % 100) < $rolloutPercentage;
+```
+
+A user in the 25% bucket for `beta-dashboard` will always be in that bucket — they will not flip between requests, and adding new flags will not affect their bucket for existing flags.
+
+## Scheduling
+
+When `enabled_from` or `enabled_until` are set, the flag is only active during the configured window. Dates are parsed with Carbon, so any format Carbon accepts is valid (e.g. `'2026-12-01'`, `'2026-12-01 09:00:00'`).
+
+## Testing
+
+```bash
+composer test
+```
+
+The test suite covers:
+
+- Config driver active/inactive/undefined flags
+- Database driver CRUD operations
+- Percentage rollout determinism
+- Schedule boundary conditions
+- Blade directives
+- Route middleware (allow/block)
+- Artisan commands
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
+## License
+
+The MIT License (MIT). See [LICENSE](LICENSE) for more information.

@@ -1,0 +1,51 @@
+{
+    "name": "philiprehberger/laravel-feature-flags",
+    "description": "Lightweight feature flags with config and database drivers, percentage rollout, and scheduling.",
+    "keywords": ["laravel", "feature-flags", "feature-toggles", "rollout", "ab-testing"],
+    "homepage": "https://github.com/philiprehberger/laravel-feature-flags",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Philip Rehberger",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/contracts": "^11.0|^12.0",
+        "illuminate/database": "^11.0|^12.0",
+        "illuminate/support": "^11.0|^12.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0|^10.0",
+        "phpunit/phpunit": "^11.0",
+        "laravel/pint": "^1.18",
+        "phpstan/phpstan": "^2.0",
+        "nunomaduro/larastan": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PhilipRehberger\\FeatureFlags\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PhilipRehberger\\FeatureFlags\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "PhilipRehberger\\FeatureFlags\\FeatureFlagServiceProvider"
+            ],
+            "aliases": {
+                "Feature": "PhilipRehberger\\FeatureFlags\\Facades\\Feature"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
