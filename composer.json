@@ -1,6 +1,6 @@
 {
     "name": "philiprehberger/laravel-feature-flags",
-    "description": "Lightweight feature flags with config and database drivers, percentage rollout, and scheduling.",
+    "description": "Lightweight feature flags with config and database drivers, percentage rollout, and scheduling",
     "keywords": ["laravel", "feature-flags", "feature-toggles", "rollout", "ab-testing"],
     "homepage": "https://github.com/philiprehberger/laravel-feature-flags",
     "license": "MIT",
