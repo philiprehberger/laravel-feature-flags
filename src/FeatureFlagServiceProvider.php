@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhilipRehberger\FeatureFlags;
 
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use PhilipRehberger\FeatureFlags\Commands\FeatureDisableCommand;
@@ -81,7 +82,7 @@ class FeatureFlagServiceProvider extends ServiceProvider
 
     private function registerMiddlewareAlias(): void
     {
-        /** @var \Illuminate\Routing\Router $router */
+        /** @var Router $router */
         $router = $this->app['router'];
         $router->aliasMiddleware('feature', FeatureFlagMiddleware::class);
     }

@@ -2,11 +2,9 @@
 
 [![Tests](https://github.com/philiprehberger/laravel-feature-flags/actions/workflows/tests.yml/badge.svg)](https://github.com/philiprehberger/laravel-feature-flags/actions/workflows/tests.yml)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/philiprehberger/laravel-feature-flags.svg)](https://packagist.org/packages/philiprehberger/laravel-feature-flags)
-[![PHP Version](https://img.shields.io/badge/php-%5E8.2-blue)](https://www.php.net/)
-[![Laravel Version](https://img.shields.io/badge/laravel-%5E11.0%7C%5E12.0-red)](https://laravel.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License](https://img.shields.io/github/license/philiprehberger/laravel-feature-flags)](LICENSE)
 
-Lightweight feature flags for Laravel with config and database drivers, percentage rollout, and scheduling. No external services required.
+Lightweight feature flags with config and database drivers, percentage rollout, and scheduling.
 
 ## Features
 
@@ -226,26 +224,36 @@ A user in the 25% bucket for `beta-dashboard` will always be in that bucket — 
 
 When `enabled_from` or `enabled_until` are set, the flag is only active during the configured window. Dates are parsed with Carbon, so any format Carbon accepts is valid (e.g. `'2026-12-01'`, `'2026-12-01 09:00:00'`).
 
-## Testing
+## API
+
+### `Feature` Facade
+
+| Method | Description |
+|--------|-------------|
+| `Feature::active(string $name): bool` | Check if a feature is active (global check) |
+| `Feature::for(Authenticatable $user): static` | Set a user context for rollout checks |
+| `Feature::allFeatures(): array` | Return all defined feature flags |
+| `Feature::enable(string $name): void` | Enable a flag at runtime (database driver only) |
+| `Feature::disable(string $name): void` | Disable a flag at runtime (database driver only) |
+
+### Blade Directives
+
+| Directive | Description |
+|-----------|-------------|
+| `@feature('name') ... @endfeature` | Render block when feature is active |
+| `@feature('name') ... @else ... @endfeature` | Render alternate block when feature is inactive |
+| `@elsefeature('name') ... @endfeature` | Else-if variant for a second feature check |
+| `@featurefor('name', $user) ... @endfeaturefor` | Per-user feature check respecting rollout |
+
+## Development
 
 ```bash
-composer test
+composer install
+vendor/bin/phpunit
+vendor/bin/pint --test
+vendor/bin/phpstan analyse
 ```
-
-The test suite covers:
-
-- Config driver active/inactive/undefined flags
-- Database driver CRUD operations
-- Percentage rollout determinism
-- Schedule boundary conditions
-- Blade directives
-- Route middleware (allow/block)
-- Artisan commands
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
-The MIT License (MIT). See [LICENSE](LICENSE) for more information.
+MIT
