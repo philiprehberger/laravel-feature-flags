@@ -9,7 +9,22 @@ use PhilipRehberger\FeatureFlags\Contracts\FeatureDriver;
 
 class FeatureManager
 {
+    /** @var array<string, callable> */
+    private array $rules = [];
+
     public function __construct(protected FeatureDriver $driver) {}
+
+    /**
+     * Register a custom rule for a feature.
+     *
+     * The callable receives the user (or null for global checks) and must return a bool.
+     *
+     * @param  callable(Authenticatable|null): bool  $rule
+     */
+    public function rule(string $feature, callable $rule): void
+    {
+        $this->rules[$feature] = $rule;
+    }
 
     /**
      * Determine if the given feature is globally active.
@@ -18,7 +33,15 @@ class FeatureManager
      */
     public function active(string $feature): bool
     {
-        return $this->driver->isActive($feature);
+        if (! $this->driver->isActive($feature)) {
+            return false;
+        }
+
+        if (isset($this->rules[$feature])) {
+            return ($this->rules[$feature])(null);
+        }
+
+        return true;
     }
 
     /**
@@ -26,7 +49,7 @@ class FeatureManager
      */
     public function for(Authenticatable $user): PendingFeatureCheck
     {
-        return new PendingFeatureCheck($this->driver, $user);
+        return new PendingFeatureCheck($this->driver, $user, $this->rules);
     }
 
     /**
