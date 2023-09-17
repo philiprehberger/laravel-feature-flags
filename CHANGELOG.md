@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-03-23
+
+### Changed
+- Add phpstan/extension-installer to require-dev with allow-plugins config
+- Remove manual larastan include from phpstan.neon (extension-installer handles it)
+- Remove non-standard Features section from README per template guide
+
 ## [1.1.0] - 2026-03-22
 
 ### Added

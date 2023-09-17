@@ -6,18 +6,6 @@
 
 Lightweight feature flags with config and database drivers, percentage rollout, and scheduling.
 
-### Features
-
-- Two drivers: **config** (deploy with code) and **database** (toggle at runtime)
-- **Percentage rollout** — expose a feature to a deterministic percentage of users
-- **Scheduling** — activate features between `enabled_from` and `enabled_until` timestamps
-- **Blade directives** — `@feature` / `@featurefor` for template-level gating
-- **Route middleware** — `feature:{name}` returns 403 for inactive features
-- **Artisan commands** — `feature:list`, `feature:enable`, `feature:disable`
-- **Custom rules** — register callables for additional per-feature gating logic
-- **Facade** — `Feature::active()`, `Feature::for($user)->active()`
-- Laravel package auto-discovery
-
 ## Requirements
 
 - PHP 8.2+
