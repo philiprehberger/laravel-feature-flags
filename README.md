@@ -3,6 +3,7 @@
 [![Tests](https://github.com/philiprehberger/laravel-feature-flags/actions/workflows/tests.yml/badge.svg)](https://github.com/philiprehberger/laravel-feature-flags/actions/workflows/tests.yml)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/philiprehberger/laravel-feature-flags.svg)](https://packagist.org/packages/philiprehberger/laravel-feature-flags)
 [![License](https://img.shields.io/github/license/philiprehberger/laravel-feature-flags)](LICENSE)
+[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
 
 Lightweight feature flags with config and database drivers, percentage rollout, and scheduling.
 
