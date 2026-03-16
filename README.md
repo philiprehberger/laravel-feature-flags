@@ -226,10 +226,13 @@ A user in the 25% bucket for `beta-dashboard` will always be in that bucket — 
 
 When `enabled_from` or `enabled_until` are set, the flag is only active during the configured window. Dates are parsed with Carbon, so any format Carbon accepts is valid (e.g. `'2026-12-01'`, `'2026-12-01 09:00:00'`).
 
-## Testing
+## Development
 
 ```bash
-composer test
+composer install
+vendor/bin/phpunit
+vendor/bin/pint --test
+vendor/bin/phpstan analyse
 ```
 
 The test suite covers:
