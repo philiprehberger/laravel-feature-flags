@@ -6,6 +6,7 @@ namespace PhilipRehberger\FeatureFlags\Tests\Feature;
 
 use Illuminate\Support\Facades\Route;
 use PhilipRehberger\FeatureFlags\Contracts\FeatureDriver;
+use PhilipRehberger\FeatureFlags\FeatureManager;
 use PhilipRehberger\FeatureFlags\Tests\TestCase;
 
 class MiddlewareTest extends TestCase
@@ -19,7 +20,7 @@ class MiddlewareTest extends TestCase
     {
         $this->app['config']->set('feature-flags.features', ['new-checkout' => true]);
         $this->app->forgetInstance(FeatureDriver::class);
-        $this->app->forgetInstance(\PhilipRehberger\FeatureFlags\FeatureManager::class);
+        $this->app->forgetInstance(FeatureManager::class);
 
         Route::middleware('feature:new-checkout')->get('/test-allow', fn () => 'ok');
 
@@ -30,7 +31,7 @@ class MiddlewareTest extends TestCase
     {
         $this->app['config']->set('feature-flags.features', ['new-checkout' => false]);
         $this->app->forgetInstance(FeatureDriver::class);
-        $this->app->forgetInstance(\PhilipRehberger\FeatureFlags\FeatureManager::class);
+        $this->app->forgetInstance(FeatureManager::class);
 
         Route::middleware('feature:new-checkout')->get('/test-block', fn () => 'ok');
 
@@ -41,7 +42,7 @@ class MiddlewareTest extends TestCase
     {
         $this->app['config']->set('feature-flags.features', []);
         $this->app->forgetInstance(FeatureDriver::class);
-        $this->app->forgetInstance(\PhilipRehberger\FeatureFlags\FeatureManager::class);
+        $this->app->forgetInstance(FeatureManager::class);
 
         Route::middleware('feature:undefined-feature')->get('/test-undefined', fn () => 'ok');
 
@@ -55,7 +56,7 @@ class MiddlewareTest extends TestCase
             'beta' => ['active' => true, 'rollout' => 100],
         ]);
         $this->app->forgetInstance(FeatureDriver::class);
-        $this->app->forgetInstance(\PhilipRehberger\FeatureFlags\FeatureManager::class);
+        $this->app->forgetInstance(FeatureManager::class);
 
         $user = $this->makeUser(1);
 

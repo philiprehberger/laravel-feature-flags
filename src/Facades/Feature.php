@@ -15,7 +15,7 @@ use PhilipRehberger\FeatureFlags\PendingFeatureCheck;
  * @method static void enable(string $feature)
  * @method static void disable(string $feature)
  *
- * @see \PhilipRehberger\FeatureFlags\FeatureManager
+ * @see FeatureManager
  */
 class Feature extends Facade
 {

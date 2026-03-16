@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhilipRehberger\FeatureFlags\Tests\Feature;
 
+use Illuminate\View\Compilers\BladeCompiler;
 use PhilipRehberger\FeatureFlags\Contracts\FeatureDriver;
 use PhilipRehberger\FeatureFlags\FeatureManager;
 use PhilipRehberger\FeatureFlags\Tests\TestCase;
@@ -24,7 +25,7 @@ class BladeDirectiveTest extends TestCase
      */
     private function evaluate(string $template): string
     {
-        /** @var \Illuminate\View\Compilers\BladeCompiler $compiler */
+        /** @var BladeCompiler $compiler */
         $compiler = $this->app['blade.compiler'];
         $compiled = $compiler->compileString($template);
 
@@ -89,7 +90,7 @@ class BladeDirectiveTest extends TestCase
 
     public function test_feature_directive_compiles_to_if_block(): void
     {
-        /** @var \Illuminate\View\Compilers\BladeCompiler $compiler */
+        /** @var BladeCompiler $compiler */
         $compiler = $this->app['blade.compiler'];
 
         $compiled = $compiler->compileString("@feature('my-feature')\nYES\n@endfeature");
