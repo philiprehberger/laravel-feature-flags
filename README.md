@@ -4,7 +4,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/philiprehberger/laravel-feature-flags.svg)](https://packagist.org/packages/philiprehberger/laravel-feature-flags)
 [![License](https://img.shields.io/github/license/philiprehberger/laravel-feature-flags)](LICENSE)
 
-Lightweight feature flags for Laravel with config and database drivers, percentage rollout, and scheduling. No external services required.
+Lightweight feature flags with config and database drivers, percentage rollout, and scheduling.
 
 ## Features
 
