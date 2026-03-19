@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-03-18
+
+### Fixed
+- Fix Larastan include path in `phpstan.neon` (`nunomaduro/larastan` → `larastan/larastan`)
+
 ## [1.0.2] - 2026-03-17
 
 ### Changed
