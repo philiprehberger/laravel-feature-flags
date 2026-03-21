@@ -6,7 +6,7 @@
 
 Lightweight feature flags with config and database drivers, percentage rollout, and scheduling.
 
-## Features
+### Features
 
 - Two drivers: **config** (deploy with code) and **database** (toggle at runtime)
 - **Percentage rollout** — expose a feature to a deterministic percentage of users
