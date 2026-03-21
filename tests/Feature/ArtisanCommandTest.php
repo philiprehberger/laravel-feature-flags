@@ -7,6 +7,7 @@ namespace PhilipRehberger\FeatureFlags\Tests\Feature;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use PhilipRehberger\FeatureFlags\Contracts\FeatureDriver;
+use PhilipRehberger\FeatureFlags\FeatureManager;
 use PhilipRehberger\FeatureFlags\Tests\TestCase;
 
 class ArtisanCommandTest extends TestCase
@@ -30,7 +31,7 @@ class ArtisanCommandTest extends TestCase
         $this->app['config']->set('feature-flags.driver', 'config');
         $this->app['config']->set('feature-flags.features', []);
         $this->app->forgetInstance(FeatureDriver::class);
-        $this->app->forgetInstance(\PhilipRehberger\FeatureFlags\FeatureManager::class);
+        $this->app->forgetInstance(FeatureManager::class);
 
         $this->artisan('feature:list')
             ->assertSuccessful()
@@ -45,7 +46,7 @@ class ArtisanCommandTest extends TestCase
             'flag-two' => false,
         ]);
         $this->app->forgetInstance(FeatureDriver::class);
-        $this->app->forgetInstance(\PhilipRehberger\FeatureFlags\FeatureManager::class);
+        $this->app->forgetInstance(FeatureManager::class);
 
         $this->artisan('feature:list')
             ->assertSuccessful()
@@ -57,7 +58,7 @@ class ArtisanCommandTest extends TestCase
     {
         $this->app['config']->set('feature-flags.driver', 'database');
         $this->app->forgetInstance(FeatureDriver::class);
-        $this->app->forgetInstance(\PhilipRehberger\FeatureFlags\FeatureManager::class);
+        $this->app->forgetInstance(FeatureManager::class);
 
         $this->insertFlag('db-flag-a', active: true);
         $this->insertFlag('db-flag-b', active: false);
@@ -76,7 +77,7 @@ class ArtisanCommandTest extends TestCase
     {
         $this->app['config']->set('feature-flags.driver', 'database');
         $this->app->forgetInstance(FeatureDriver::class);
-        $this->app->forgetInstance(\PhilipRehberger\FeatureFlags\FeatureManager::class);
+        $this->app->forgetInstance(FeatureManager::class);
 
         $this->insertFlag('togglable', active: false);
 
@@ -92,7 +93,7 @@ class ArtisanCommandTest extends TestCase
         $this->app['config']->set('feature-flags.driver', 'config');
         $this->app['config']->set('feature-flags.features', []);
         $this->app->forgetInstance(FeatureDriver::class);
-        $this->app->forgetInstance(\PhilipRehberger\FeatureFlags\FeatureManager::class);
+        $this->app->forgetInstance(FeatureManager::class);
 
         $this->artisan('feature:enable', ['name' => 'any'])
             ->assertFailed();
@@ -106,7 +107,7 @@ class ArtisanCommandTest extends TestCase
     {
         $this->app['config']->set('feature-flags.driver', 'database');
         $this->app->forgetInstance(FeatureDriver::class);
-        $this->app->forgetInstance(\PhilipRehberger\FeatureFlags\FeatureManager::class);
+        $this->app->forgetInstance(FeatureManager::class);
 
         $this->insertFlag('togglable', active: true);
 
@@ -122,7 +123,7 @@ class ArtisanCommandTest extends TestCase
         $this->app['config']->set('feature-flags.driver', 'config');
         $this->app['config']->set('feature-flags.features', []);
         $this->app->forgetInstance(FeatureDriver::class);
-        $this->app->forgetInstance(\PhilipRehberger\FeatureFlags\FeatureManager::class);
+        $this->app->forgetInstance(FeatureManager::class);
 
         $this->artisan('feature:disable', ['name' => 'any'])
             ->assertFailed();

@@ -6,6 +6,7 @@ namespace PhilipRehberger\FeatureFlags\Tests;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use PhilipRehberger\FeatureFlags\Facades\Feature;
 use PhilipRehberger\FeatureFlags\FeatureFlagServiceProvider;
 
 abstract class TestCase extends OrchestraTestCase
@@ -20,7 +21,7 @@ abstract class TestCase extends OrchestraTestCase
     protected function getPackageAliases($app): array
     {
         return [
-            'Feature' => \PhilipRehberger\FeatureFlags\Facades\Feature::class,
+            'Feature' => Feature::class,
         ];
     }
 
