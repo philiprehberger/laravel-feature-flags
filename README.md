@@ -19,8 +19,8 @@ Lightweight feature flags with config and database drivers, percentage rollout, 
 
 ## Requirements
 
-- PHP ^8.2
-- Laravel ^11.0 or ^12.0
+- PHP 8.2+
+- Laravel 11 or 12
 
 ## Installation
 
@@ -45,7 +45,7 @@ php artisan vendor:publish --tag=feature-flags-migrations
 php artisan migrate
 ```
 
-## Configuration
+### Configuration
 
 `config/feature-flags.php`:
 
@@ -186,13 +186,13 @@ Example `feature:list` output:
 +------------------+---------+------------+-----------+-------------+
 ```
 
-## Drivers
+### Drivers
 
-### Config Driver
+#### Config Driver
 
 Flags are defined in `config/feature-flags.php`. Changes require a deployment. This is the default driver and ideal for flags that are tied to your release cycle.
 
-### Database Driver
+#### Database Driver
 
 Flags are stored in the `feature_flags` table and can be toggled at runtime via Artisan commands, the facade, or any database tooling. Run the migration before using this driver.
 
@@ -209,7 +209,7 @@ The migration creates the following columns:
 | `enabled_until` | timestamp (nullable) | Activation end |
 | `created_at` / `updated_at` | timestamps | Standard Laravel timestamps |
 
-## Rollout Logic
+### Rollout Logic
 
 Percentage rollout uses a deterministic hash to ensure the same user always receives the same result:
 
@@ -220,7 +220,7 @@ $active = ($hash % 100) < $rolloutPercentage;
 
 A user in the 25% bucket for `beta-dashboard` will always be in that bucket — they will not flip between requests, and adding new flags will not affect their bucket for existing flags.
 
-## Scheduling
+### Scheduling
 
 When `enabled_from` or `enabled_until` are set, the flag is only active during the configured window. Dates are parsed with Carbon, so any format Carbon accepts is valid (e.g. `'2026-12-01'`, `'2026-12-01 09:00:00'`).
 
