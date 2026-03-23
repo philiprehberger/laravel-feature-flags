@@ -9,17 +9,29 @@ use PhilipRehberger\FeatureFlags\Contracts\FeatureDriver;
 
 class PendingFeatureCheck
 {
+    /**
+     * @param  array<string, callable>  $rules
+     */
     public function __construct(
         protected FeatureDriver $driver,
         protected Authenticatable $user,
+        protected array $rules = [],
     ) {}
 
     /**
      * Determine if the given feature is active for the bound user,
-     * respecting percentage rollout and scheduling constraints.
+     * respecting percentage rollout, scheduling constraints, and custom rules.
      */
     public function active(string $feature): bool
     {
-        return $this->driver->isActiveForUser($feature, $this->user);
+        if (! $this->driver->isActiveForUser($feature, $this->user)) {
+            return false;
+        }
+
+        if (isset($this->rules[$feature])) {
+            return ($this->rules[$feature])($this->user);
+        }
+
+        return true;
     }
 }

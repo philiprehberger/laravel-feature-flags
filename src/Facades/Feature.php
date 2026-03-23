@@ -9,6 +9,7 @@ use PhilipRehberger\FeatureFlags\FeatureManager;
 use PhilipRehberger\FeatureFlags\PendingFeatureCheck;
 
 /**
+ * @method static void rule(string $feature, callable $rule)
  * @method static bool active(string $feature)
  * @method static PendingFeatureCheck for(\Illuminate\Contracts\Auth\Authenticatable $user)
  * @method static array<string, array<string, mixed>> allFeatures()

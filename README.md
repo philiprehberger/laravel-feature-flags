@@ -14,6 +14,7 @@ Lightweight feature flags with config and database drivers, percentage rollout, 
 - **Blade directives** — `@feature` / `@featurefor` for template-level gating
 - **Route middleware** — `feature:{name}` returns 403 for inactive features
 - **Artisan commands** — `feature:list`, `feature:enable`, `feature:disable`
+- **Custom rules** — register callables for additional per-feature gating logic
 - **Facade** — `Feature::active()`, `Feature::for($user)->active()`
 - Laravel package auto-discovery
 
@@ -110,6 +111,26 @@ $flags = Feature::allFeatures();
 // Enable / disable at runtime (database driver only)
 Feature::enable('new-checkout');
 Feature::disable('new-checkout');
+```
+
+### Custom Rules
+
+Register a callable that must also pass for a feature to be active. Rules are evaluated after percentage rollout and scheduling. The callable receives the user (or `null` for global checks) and must return a bool:
+
+```php
+use PhilipRehberger\FeatureFlags\Facades\Feature;
+
+// Only allow users with a verified email
+Feature::rule('beta-dashboard', function (?Authenticatable $user): bool {
+    return $user !== null && $user->hasVerifiedEmail();
+});
+
+// Rules combine with rollout — both must pass
+// Here only verified users within the 25% rollout see the feature
+Feature::for($request->user())->active('beta-dashboard');
+
+// Global check passes null to the rule
+Feature::active('beta-dashboard'); // rule receives null
 ```
 
 ### Blade Directives
@@ -230,6 +251,7 @@ When `enabled_from` or `enabled_until` are set, the flag is only active during t
 
 | Method | Description |
 |--------|-------------|
+| `Feature::rule(string $name, callable $rule): void` | Register a custom rule for a feature |
 | `Feature::active(string $name): bool` | Check if a feature is active (global check) |
 | `Feature::for(Authenticatable $user): static` | Set a user context for rollout checks |
 | `Feature::allFeatures(): array` | Return all defined feature flags |

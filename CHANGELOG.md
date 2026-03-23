@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-03-22
+
+### Added
+- Custom rules via `Feature::rule(string $feature, callable $rule)` — register a callable that receives the user (or null) and returns bool
+- Rules are evaluated after percentage rollout and scheduling; if a rule is registered for a feature, it must also pass
+- Rules work with both global checks (`Feature::active()`) and per-user checks (`Feature::for($user)->active()`)
+
 ## [1.0.6] - 2026-03-23
 
 ### Fixed
